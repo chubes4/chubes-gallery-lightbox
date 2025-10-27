@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# Simple Gallery Lightbox - Production Build Script
+# Chubes Gallery Lightbox - Production Build Script
 # Creates clean production ZIP package for WordPress deployment
 
 set -e
 
-PLUGIN_NAME="simple-gallery-lightbox"
+PLUGIN_NAME="chubes-gallery-lightbox"
 
-echo "Building Simple Gallery Lightbox..."
+echo "Building Chubes Gallery Lightbox..."
 
 # Clean previous builds
 rm -rf build

@@ -1,4 +1,4 @@
-# Simple Gallery Lightbox
+# Chubes Gallery Lightbox
 
 A clean, minimal lightbox plugin for WordPress galleries with keyboard navigation and mobile support.
 
@@ -14,7 +14,7 @@ A clean, minimal lightbox plugin for WordPress galleries with keyboard navigatio
 
 ## Installation
 
-1. Upload the plugin files to `/wp-content/plugins/simple-gallery-lightbox/`
+1. Upload the plugin files to `/wp-content/plugins/chubes-gallery-lightbox/`
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. For multisite: Network activate for all sites
 

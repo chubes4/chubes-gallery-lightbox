@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name: Simple Gallery Lightbox
- * Plugin URI: https://extrachill.com
+ * Plugin Name: Chubes Gallery Lightbox
+ * Plugin URI: https://chubes.net
  * Description: A clean, simple lightbox for WordPress galleries with keyboard navigation and mobile support.
  * Version: 1.0.0
  * Author: Chris Huber
@@ -13,7 +13,7 @@
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  *
- * @package SimpleGalleryLightbox
+ * @package ChubesGalleryLightbox
  * @since 1.0.0
  */
 
@@ -23,14 +23,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define plugin constants
-define( 'SGL_VERSION', '1.0.0' );
-define( 'SGL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-define( 'SGL_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
+define( 'CGL_VERSION', '1.0.0' );
+define( 'CGL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'CGL_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 
 /**
- * Main Simple Gallery Lightbox Class
+ * Main Chubes Gallery Lightbox Class
  */
-class SimpleGalleryLightbox {
+class ChubesGalleryLightbox {
 
     /**
      * Initialize the plugin
@@ -46,18 +46,18 @@ class SimpleGalleryLightbox {
     public function enqueue_assets() {
         // Enqueue lightbox CSS
         wp_enqueue_style(
-            'simple-gallery-lightbox',
-            SGL_PLUGIN_URL . 'assets/css/lightbox.css',
+            'chubes-gallery-lightbox',
+            CGL_PLUGIN_URL . 'assets/css/lightbox.css',
             array(),
-            SGL_VERSION
+            CGL_VERSION
         );
 
         // Enqueue lightbox JavaScript
         wp_enqueue_script(
-            'simple-gallery-lightbox',
-            SGL_PLUGIN_URL . 'assets/js/lightbox.js',
+            'chubes-gallery-lightbox',
+            CGL_PLUGIN_URL . 'assets/js/lightbox.js',
             array( 'jquery' ),
-            SGL_VERSION,
+            CGL_VERSION,
             true
         );
     }
@@ -84,7 +84,7 @@ class SimpleGalleryLightbox {
 /**
  * Initialize the plugin
  */
-function simple_gallery_lightbox_init() {
-    new SimpleGalleryLightbox();
+function chubes_gallery_lightbox_init() {
+    new ChubesGalleryLightbox();
 }
-add_action( 'init', 'simple_gallery_lightbox_init' );
+add_action( 'init', 'chubes_gallery_lightbox_init' );
