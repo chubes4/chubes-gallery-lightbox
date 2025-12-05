@@ -3,7 +3,7 @@
  * Plugin Name: Chubes Gallery Lightbox
  * Plugin URI: https://chubes.net
  * Description: A clean, simple lightbox for WordPress galleries with keyboard navigation and mobile support.
- * Version: 1.0.0
+ * Version: 1.1.0
  * Author: Chris Huber
  * Author URI: https://chubes.net
  * Network: true
@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define plugin constants
-define( 'CGL_VERSION', '1.0.0' );
+define( 'CGL_VERSION', '1.1.0' );
 define( 'CGL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'CGL_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -56,7 +56,7 @@ class ChubesGalleryLightbox {
         wp_enqueue_script(
             'chubes-gallery-lightbox',
             CGL_PLUGIN_URL . 'assets/js/lightbox.js',
-            array( 'jquery' ),
+            array(),
             CGL_VERSION,
             true
         );
@@ -67,7 +67,7 @@ class ChubesGalleryLightbox {
      */
     public function render_lightbox_html() {
         ?>
-        <div id="custom-lightbox" style="display: none;">
+        <div id="custom-lightbox">
             <div class="lightbox-content">
                 <span class="close-lightbox">&times;</span>
                 <img src="" alt="" />

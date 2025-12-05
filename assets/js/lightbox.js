@@ -1,85 +1,144 @@
-jQuery(document).ready(function($) {
-    // Select all images within the gallery block
-    var $galleryImages = $('.wp-block-gallery figure.wp-block-image img');
-    var currentIndex = -1;
+/**
+ * Chubes Gallery Lightbox - Vanilla JS
+ * Handles lightbox functionality for WordPress gallery blocks
+ */
+(function() {
+    'use strict';
 
-    // Open lightbox on image click
-    $galleryImages.on('click', function(e) {
-        e.preventDefault();
-        currentIndex = $galleryImages.index(this);
-        openLightbox($(this).attr('src'));
-    });
+    let galleryImages = [];
+    let currentIndex = -1;
+    let touchStartX = 0;
+    let touchEndX = 0;
 
-    // Function to open the lightbox (uses HTML structure from PHP)
-    function openLightbox(imgSrc) {
-        $('#custom-lightbox img').attr('src', imgSrc);
-        $('#custom-lightbox').fadeIn(300);
-    }
+    const lightbox = {
+        element: null,
+        image: null,
+        prevBtn: null,
+        nextBtn: null,
+        closeBtn: null,
 
-    // Close lightbox when clicking overlay or close button
-    $('body').on('click', '#custom-lightbox, .close-lightbox', function() {
-        $('#custom-lightbox').fadeOut(300);
-    });
+        init: function() {
+            this.element = document.getElementById('custom-lightbox');
+            if (!this.element) return;
 
-    // Prevent lightbox closing when clicking inside content area
-    $('body').on('click', '.lightbox-content', function(e) {
-        e.stopPropagation();
-    });
+            this.image = this.element.querySelector('img');
+            this.prevBtn = this.element.querySelector('.lightbox-prev');
+            this.nextBtn = this.element.querySelector('.lightbox-next');
+            this.closeBtn = this.element.querySelector('.close-lightbox');
 
-    // Navigate to previous image
-    $('body').on('click', '.lightbox-prev', function(e) {
-        e.stopPropagation();
-        currentIndex = (currentIndex > 0) ? currentIndex - 1 : $galleryImages.length - 1;
-        var newImg = $galleryImages.eq(currentIndex).attr('src');
-        $('#custom-lightbox img').attr('src', newImg);
-    });
+            this.bindGalleryImages();
+            this.bindNavigation();
+            this.bindKeyboard();
+            this.bindTouch();
+        },
 
-    // Navigate to next image
-    $('body').on('click', '.lightbox-next', function(e) {
-        e.stopPropagation();
-        currentIndex = (currentIndex < $galleryImages.length - 1) ? currentIndex + 1 : 0;
-        var newImg = $galleryImages.eq(currentIndex).attr('src');
-        $('#custom-lightbox img').attr('src', newImg);
-    });
+        bindGalleryImages: function() {
+            galleryImages = Array.from(
+                document.querySelectorAll('.wp-block-gallery .wp-block-image img')
+            );
 
-    // Keyboard navigation: left/right arrows for prev/next, Esc to close
-    $(document).on('keydown', function(e) {
-        if ($('#custom-lightbox').is(':visible')) {
-            if (e.keyCode === 37) { // left arrow
-                e.preventDefault();
-                $('.lightbox-prev').trigger('click');
-            } else if (e.keyCode === 39) { // right arrow
-                e.preventDefault();
-                $('.lightbox-next').trigger('click');
-            } else if (e.keyCode === 27) { // escape
-                e.preventDefault();
-                $('#custom-lightbox').fadeOut(300);
+            galleryImages.forEach((img, index) => {
+                img.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    currentIndex = index;
+                    this.open(this.getFullSizeUrl(img));
+                });
+            });
+        },
+
+        getFullSizeUrl: function(img) {
+            const parentLink = img.closest('a');
+            if (parentLink && parentLink.href) {
+                return parentLink.href;
             }
+            return img.src;
+        },
+
+        open: function(imgSrc) {
+            this.image.src = imgSrc;
+            this.element.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        },
+
+        close: function() {
+            this.element.classList.remove('active');
+            document.body.style.overflow = '';
+        },
+
+        prev: function() {
+            if (galleryImages.length === 0) return;
+            currentIndex = (currentIndex > 0) ? currentIndex - 1 : galleryImages.length - 1;
+            this.image.src = this.getFullSizeUrl(galleryImages[currentIndex]);
+        },
+
+        next: function() {
+            if (galleryImages.length === 0) return;
+            currentIndex = (currentIndex < galleryImages.length - 1) ? currentIndex + 1 : 0;
+            this.image.src = this.getFullSizeUrl(galleryImages[currentIndex]);
+        },
+
+        bindNavigation: function() {
+            this.element.addEventListener('click', (e) => {
+                if (e.target === this.element) {
+                    this.close();
+                }
+            });
+
+            this.closeBtn.addEventListener('click', () => this.close());
+
+            this.prevBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.prev();
+            });
+
+            this.nextBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.next();
+            });
+        },
+
+        bindKeyboard: function() {
+            document.addEventListener('keydown', (e) => {
+                if (!this.element.classList.contains('active')) return;
+
+                switch (e.key) {
+                    case 'ArrowLeft':
+                        e.preventDefault();
+                        this.prev();
+                        break;
+                    case 'ArrowRight':
+                        e.preventDefault();
+                        this.next();
+                        break;
+                    case 'Escape':
+                        e.preventDefault();
+                        this.close();
+                        break;
+                }
+            });
+        },
+
+        bindTouch: function() {
+            const content = this.element.querySelector('.lightbox-content');
+
+            content.addEventListener('touchstart', (e) => {
+                touchStartX = e.touches[0].clientX;
+            }, { passive: true });
+
+            content.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].clientX;
+                const diff = touchStartX - touchEndX;
+
+                if (Math.abs(diff) > 50) {
+                    if (diff > 0) {
+                        this.next();
+                    } else {
+                        this.prev();
+                    }
+                }
+            }, { passive: true });
         }
-    });
+    };
 
-    // Swipe navigation for mobile devices
-    var touchStartX = 0;
-    var touchEndX = 0;
-
-    // Record starting X coordinate
-    $('body').on('touchstart', '#custom-lightbox .lightbox-content', function(e) {
-        touchStartX = e.originalEvent.touches[0].clientX;
-    });
-
-    // Determine swipe direction on touchend
-    $('body').on('touchend', '#custom-lightbox .lightbox-content', function(e) {
-        touchEndX = e.originalEvent.changedTouches[0].clientX;
-        var diff = touchStartX - touchEndX;
-        // Use a threshold of 50px for swipe detection
-        if (Math.abs(diff) > 50) {
-            if (diff > 0) {
-                // Swipe left, move to next image
-                $('.lightbox-next').trigger('click');
-            } else {
-                // Swipe right, move to previous image
-                $('.lightbox-prev').trigger('click');
-            }
-        }
-    });
-});
+    document.addEventListener('DOMContentLoaded', () => lightbox.init());
+})();

@@ -10,6 +10,14 @@
     align-items: center;
     justify-content: center;
     z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+#custom-lightbox.active {
+    opacity: 1;
+    visibility: visible;
 }
 
 /* Lightbox Content */
@@ -22,7 +30,7 @@
 #custom-lightbox img {
     display: block;
     max-width: 100%;
-    max-height: 100vh;
+    max-height: 90vh;
     margin: 0 auto;
 }
 
@@ -56,6 +64,6 @@
     padding: 0 20px;
 }
 
-.wp-block-gallery  .wp-block-image{
+.wp-block-gallery .wp-block-image {
     cursor: pointer;
 }
