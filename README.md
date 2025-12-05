@@ -30,7 +30,7 @@ The plugin automatically enhances all WordPress gallery blocks with lightbox fun
 
 ## Technical Details
 
-- **Version**: 1.1.0
+- **Version**: 1.1.1
 - **Requires WordPress**: 5.0+
 - **Tested up to**: 6.6
 - **Requires PHP**: 7.4+
