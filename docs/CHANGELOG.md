@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-03-29
+
+### Changed
+- Add changelog_target to homeboy.json
+- Add homeboy.json for release and deploy management
+- Use srcset-aware image selection and preload adjacent images
+- Bump version to 1.1.1
+- Bump version to 1.1.0
+- Rename plugin from Simple Gallery Lightbox to Chubes Gallery Lightbox
+- Add production build script
+- Initial release of Simple Gallery Lightbox WordPress plugin
+
+### Fixed
+- Fix build script and add gitignore
+
 ## [1.1.1] - 2025-12-05
 
 ### Improvements
