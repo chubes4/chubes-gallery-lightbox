@@ -1,0 +1,18 @@
+{
+  "auto_cleanup": false,
+  "extensions": {
+    "wordpress": {}
+  },
+  "id": "chubes-gallery-lightbox",
+  "remote_path": "wp-content/plugins/chubes-gallery-lightbox",
+  "version_targets": [
+    {
+      "file": "chubes-gallery-lightbox.php",
+      "pattern": "(?m)^\\s*\\*?\\s*Version:\\s*([0-9.]+)"
+    },
+    {
+      "file": "chubes-gallery-lightbox.php",
+      "pattern": "CGL_VERSION',\\s*'([0-9.]+)'"
+    }
+  ]
+}
