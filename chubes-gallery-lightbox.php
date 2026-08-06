@@ -79,13 +79,13 @@ class ChubesGalleryLightbox {
             return;
         }
         ?>
-        <div id="custom-lightbox">
+        <div id="custom-lightbox" role="dialog" aria-modal="true" aria-label="Image lightbox" aria-hidden="true">
             <div class="lightbox-content">
-                <span class="close-lightbox">&times;</span>
+                <button type="button" class="close-lightbox" aria-label="Close lightbox">&times;</button>
                 <img src="" alt="" />
                 <div class="lightbox-nav">
-                    <button class="lightbox-prev">&#8249;</button>
-                    <button class="lightbox-next">&#8250;</button>
+                    <button type="button" class="lightbox-prev" aria-label="Previous image">&#8249;</button>
+                    <button type="button" class="lightbox-next" aria-label="Next image">&#8250;</button>
                 </div>
             </div>
         </div>
