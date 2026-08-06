@@ -16,6 +16,9 @@
         prevBtn: null,
         nextBtn: null,
         closeBtn: null,
+        opener: null,
+        inertElements: [],
+        bodyOverflow: '',
 
         init: function() {
             this.element = document.getElementById('custom-lightbox');
@@ -41,7 +44,7 @@
                 img.addEventListener('click', (e) => {
                     e.preventDefault();
                     currentIndex = index;
-                    this.open(this.getBestUrl(img));
+                    this.open(img);
                     this.preloadAdjacent();
                 });
             });
@@ -109,28 +112,71 @@
             }
         },
 
-        open: function(imgSrc) {
-            this.image.src = imgSrc;
+        showImage: function(img) {
+            this.image.src = this.getBestUrl(img);
+            this.image.alt = img.getAttribute('alt') || '';
+        },
+
+        open: function(img) {
+            this.opener = img.closest('a[href]') || img;
+            this.showImage(img);
+            this.bodyOverflow = document.body.style.overflow;
+            var modalAncestor = this.element;
+            while (modalAncestor !== document.body) {
+                var parent = modalAncestor.parentElement;
+                Array.from(parent.children).forEach((element) => {
+                    if (element !== modalAncestor) {
+                        this.inertElements.push({ element: element, wasInert: element.inert });
+                    }
+                });
+                modalAncestor = parent;
+            }
+            this.inertElements.forEach((entry) => {
+                entry.element.inert = true;
+            });
             this.element.classList.add('active');
+            this.element.setAttribute('aria-hidden', 'false');
             document.body.style.overflow = 'hidden';
+            this.closeBtn.focus();
         },
 
         close: function() {
+            if (!this.element.classList.contains('active')) return;
+
             this.element.classList.remove('active');
-            document.body.style.overflow = '';
+            this.element.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = this.bodyOverflow;
+            this.inertElements.forEach((entry) => {
+                if (entry.element.isConnected) {
+                    entry.element.inert = entry.wasInert;
+                }
+            });
+            this.inertElements = [];
+
+            if (this.opener && this.opener.isConnected) {
+                var addedTabIndex = !this.opener.hasAttribute('tabindex') && this.opener.tagName !== 'A';
+                if (addedTabIndex) {
+                    this.opener.setAttribute('tabindex', '-1');
+                }
+                this.opener.focus();
+                if (addedTabIndex) {
+                    this.opener.removeAttribute('tabindex');
+                }
+            }
+            this.opener = null;
         },
 
         prev: function() {
             if (galleryImages.length === 0) return;
             currentIndex = (currentIndex > 0) ? currentIndex - 1 : galleryImages.length - 1;
-            this.image.src = this.getBestUrl(galleryImages[currentIndex]);
+            this.showImage(galleryImages[currentIndex]);
             this.preloadAdjacent();
         },
 
         next: function() {
             if (galleryImages.length === 0) return;
             currentIndex = (currentIndex < galleryImages.length - 1) ? currentIndex + 1 : 0;
-            this.image.src = this.getBestUrl(galleryImages[currentIndex]);
+            this.showImage(galleryImages[currentIndex]);
             this.preloadAdjacent();
         },
 
@@ -171,8 +217,37 @@
                         e.preventDefault();
                         this.close();
                         break;
+                    case 'Tab':
+                        this.trapFocus(e);
+                        break;
                 }
             });
+
+            document.addEventListener('focusin', (e) => {
+                if (this.element.classList.contains('active') && !this.element.contains(e.target)) {
+                    this.closeBtn.focus();
+                }
+            });
+        },
+
+        trapFocus: function(e) {
+            var focusable = Array.from(
+                this.element.querySelectorAll('button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])')
+            );
+            if (focusable.length === 0) {
+                e.preventDefault();
+                return;
+            }
+
+            var first = focusable[0];
+            var last = focusable[focusable.length - 1];
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+            }
         },
 
         bindTouch: function() {
